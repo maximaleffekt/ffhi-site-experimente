@@ -28,10 +28,6 @@ jobs:
           echo "targets=[\"${TARGETS%???}]" >> "$GITHUB_OUTPUT"
 
   build:
-    needs: define_matrix
-    strategy:
-      matrix:
-        version: ${{ fromJSON(needs.define_matrix.outputs.versions) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Gluon Release
@@ -50,9 +46,9 @@ jobs:
       - name: Make Firmware
         run: |
           BUILD_THREADS="$(($(nproc) + 1))"
-          make -j$BUILD_THREADS V=s GLUON_TARGET=${{ matrix.version }}
+          make -j$BUILD_THREADS V=s GLUON_TARGET=x86-legacy
       - name: Publish Artifacts
         uses: actions/upload-artifact@v4
         with:
           path: './output/images/*'
-          name: ${{ matrix.version }}_output
+          name: x86_legacy_output
